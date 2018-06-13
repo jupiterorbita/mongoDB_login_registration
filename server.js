@@ -178,18 +178,18 @@ app.post("/register", function(req, res) {
     // RUN VALIDATOR AND SAVE (IF VALIDATOR PASSES)
     // ERRORS
     if (err) {
-      if (err.errors.first_name) {
-        // req.flash("first_name_reg_error", err.errors["first_name"].message);
-      }
-      if (err.errors.last_name) {
-        // req.flash("last_name_reg_error", err.errors["last_name"].message);
-      }
-      if (err.errors.email) {
-        // req.flash("email_reg_error", err.errors["email"].message);
-      }
-      if (err.errors.password) {
-        // req.flash("password_reg_error", err.errors["password"].message);
-      }
+    //   if (err.errors.first_name) {
+    //     // req.flash("first_name_reg_error", err.errors["first_name"].message);
+    //   }
+    //   if (err.errors.last_name) {
+    //     // req.flash("last_name_reg_error", err.errors["last_name"].message);
+    //   }
+    //   if (err.errors.email) {
+    //     // req.flash("email_reg_error", err.errors["email"].message);
+    //   }
+    //   if (err.errors.password) {
+    //     // req.flash("password_reg_error", err.errors["password"].message);
+    //   }
 
       for (var key in err.errors) {
         req.flash("registration", err.errors[key].message);
