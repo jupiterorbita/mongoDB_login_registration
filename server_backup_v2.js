@@ -32,7 +32,7 @@ app.use(
   })
 );
 
-// ==============  DB USER schema  ================
+// ==============  DB schema  ================
 var UserSchema = new mongoose.Schema(
   {
     first_name: {
@@ -49,12 +49,11 @@ var UserSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      //   unique: [true, "email aready exists"],
       required: [true, "email cannot be empty"],
       minlength: [3, "email at least 3 long"],
       maxlength: [20, "why such a big email?"]
     },
-    birthday: { type: Date, required: [true, "please enter a birthday"] },
+    birthday: { type: Date, required: true },
     password: {
       type: String,
       required: [true, "pass cannot be empty!!"],
@@ -88,15 +87,9 @@ app.get("/", function(req, res) {
 
 // ============== SUCCESS PAGE =====================
 app.get("/success", function(req, res) {
-  if (req.session.first_name) {
-    console.log('\n ======> "/success" <=====');
-    user = req.session.first_name;
-    res.render("success", { user: user });
-  } else {
-      console.log('user tried to login without access!');
-      req.flash('registration', 'PLEASE REGISTER FIRST OR LOGIN')
-    res.redirect("/");
-  }
+  console.log('\n ======> "/success" <=====');
+  user = req.session.first_name;
+  res.render("success", { user: user });
 });
 
 // =============== LOGOUT =========================
@@ -164,6 +157,23 @@ app.post("/register", function(req, res) {
   console.log('\n ======> "/register" METHOD <=====');
   console.log("POST DATA", req.body);
 
+  //--------- first name FORM validate---------
+  if (req.body.first_name == "") {
+    req.flash("first_name_reg_error", "CANNOT BE EMPTY");
+  } else if (req.body.first_name.length < 3) {
+    req.flash("first_name_reg_error", "must be more than 3");
+  } else if (req.body.first_name.length > 20) {
+    req.flash("first_name_reg_error", "name cannot be more than 20 letters!");
+  }
+  //--------- last name FORM validate----------
+  if (req.body.last_name == "") {
+    req.flash("last_name_reg_error", "CANNOT BE EMPTY");
+  } else if (req.body.last_name.length < 3) {
+    req.flash("last_name_reg_error", "must be more than 3");
+  } else if (req.body.last_name.length > 20) {
+    req.flash("last_name_reg_error", "name cannot be more than 20 letters!");
+  }
+
   var userInstance = new User({
     first_name: req.body.first_name,
     last_name: req.body.last_name,
@@ -172,35 +182,51 @@ app.post("/register", function(req, res) {
     birthday: req.body.birthday
   });
 
-  //   console.log("@@@@@@@@@@@@@@@@@@ \nuserInstance", userInstance);
+  console.log("@@@@@@@@@@@@@@@@@@ \nuserInstance", userInstance);
 
   userInstance.save(function(err) {
     // RUN VALIDATOR AND SAVE (IF VALIDATOR PASSES)
+
     // ERRORS
     if (err) {
-      if (err.errors.first_name) {
-        // req.flash("first_name_reg_error", err.errors["first_name"].message);
-      }
-      if (err.errors.last_name) {
-        // req.flash("last_name_reg_error", err.errors["last_name"].message);
-      }
-      if (err.errors.email) {
-        // req.flash("email_reg_error", err.errors["email"].message);
-      }
-      if (err.errors.password) {
-        // req.flash("password_reg_error", err.errors["password"].message);
-      }
+      console.log("@@@@@@@@@@@@@@@@ we have an error ERR", err);
+      console.log("@@@@@@@@@@@@@@@@ we have an error ERR.ERRORS", err.errors);
+      console.log(
+        "@@@@@@@@@@@@@@@@ we have an error ERR.ERRORS",
+        err.errors.first_name
+      );
+      console.log(
+        "@@@@@@@@@@@@@@@@ we have an error ERR.ERRORS",
+        err.errors.last_name
+      );
+      console.log(
+        "@@@@@@@@@@@@@@@@ we have an error ERR.ERRORS",
+        err.errors.email
+      );
 
-      for (var key in err.errors) {
-        req.flash("registration", err.errors[key].message);
+      if (err.errors.first_name) {
+        req.flash("first_name_reg_error", err.errors["first_name"].message);
       }
+      // if(err.errors.first_name){
+      //     req.flash('last_name_error', 'Message cool for fist name')
+      // }
+      // if(err.errors.first_name){
+      //     req.flash('email_error', 'Message cool for fist name')
+      // }
+      // if(err.errors.first_name){
+      //     req.flash('first_name_error', 'Message cool for fist name')
+      // }
+      // if(err.errors.first_name){
+      //     req.flash('first_name_error', 'Message cool for fist name')
+      // }
+
+      // for (var key in err.errors) {
+      //   req.flash("registration", err.errors[key].message);
+      // }
       res.redirect("/");
     } else {
       // NO ERRORS
       console.log("successfully added a user!");
-      //   userInstance.findOne({email: req.body.email}, (err, user) => {
-      req.session.first_name = userInstance.first_name;
-      //   })
       res.redirect("/success");
     }
   });
