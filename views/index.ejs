@@ -12,8 +12,19 @@
 </head>
 <body>
     <h1>Login - Registration</h1>
+    <!-- JSON.stringify(messages) => <%- JSON.stringify(messages) %>  -->
+
     <hr>
     <h3>Login</h3>
+
+    <% if(messages.login) { %>
+        <% for (var x of messages.login) { %>
+         <h3><%= x %></h3>
+        <% } %>
+    <% } %>
+        
+
+
     <form action="/login" method="POST">
         email: <input type="text" name="email"/><br>
         password <input type="password" name="password"/><br>
@@ -21,11 +32,23 @@
     </form>
     <hr>
     <h3>Registration</h3>
-    <form action="/register">
-        email: <input type="text" name="email"/><br>
+    asdf
+<br><%= first_name_reg_error %><br>
+    asdf 
+
+    <% if(messages.registration) { %>
+        <% for (var x of messages.registration) { %>
+         <h3><%= x %></h3>
+        <% } %>
+    <% } %>
+
+
+    <form action="/register" method="POST">
         first name: <input type="text" name="first_name"/><br>
         last name: <input type="text" name="last_name"/><br>
+        email: <input type="text" name="email"/><br>
         birthday <input type="date" name="birthday"/><br>
+        password <input type="password" name="password"/><br>
         <input type="submit" value="Register"/><br>
     </form>
 
